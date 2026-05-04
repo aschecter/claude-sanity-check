@@ -1,0 +1,110 @@
+---
+name: sanity-check
+description: Use this skill when the user says "sanity check," "run a sanity check," "sanity check this," or any close variant. Review the full conversation and any artifacts produced in it for failure modes of single-minded or uncritical thinking — on Claude's part AND the user's. Produces a structured, honest critique with specific instances, severity, and suggested fixes. For academic papers, grants, and business plans, includes a reality check on real-world viability tuned to academic publishing and federal grant funding. Trigger only on explicit request; do not run proactively.
+---
+
+# Sanity Check (Academic Variant)
+
+This is a tuned variant of the generic `sanity-check` skill, adapted for an academic researcher working on business / social science papers and federal grant proposals. The core skill is unchanged; the **Reality check** section is specialized for academic publishing and grant submission contexts.
+
+## Purpose
+
+The user wants a deliberate adversarial review of the work done so far in the conversation. The goal is to catch the failure modes that conversational momentum tends to hide: agreement that wasn't earned, confidence that wasn't justified, assumptions that weren't checked, paths that weren't questioned, and ideas that wouldn't survive contact with the real world.
+
+The user's framing: *"If I'm asking you this, it's because I'm concerned I've been doing it in the first place."* The skill should treat the request itself as evidence that something feels off, and respond with real scrutiny — not reassurance.
+
+## When to run
+
+Only when the user explicitly asks. Triggers include "sanity check," "run a sanity check," "sanity check this," "do a sanity check on what we've done," etc. Do not run this skill proactively or as part of other responses.
+
+## Scope
+
+Review the **entire conversation** plus **all artifacts** produced in it (code, documents, analyses, plans, recommendations). If artifacts are central, scrutinize them in detail. If peripheral, note them briefly and focus on reasoning.
+
+## Tone
+
+Constructive but honest. Useful, not performative.
+
+- No softening hedges that blunt the point.
+- No performative bluntness or contrarianism for its own sake.
+- Specific, cited, and actionable. Every flag points to a concrete instance and suggests a concrete fix or follow-up check.
+- If a dimension genuinely has nothing to flag, say so briefly and move on. No padding.
+
+## Review dimensions
+
+For each dimension, identify specific instances (quote or reference where possible), assign severity (low / medium / high), and propose a fix or follow-up check.
+
+### 1. Sycophancy (Claude)
+Did Claude agree too readily? Praise the user's ideas without scrutiny? Soften pushback or drop disagreements after light resistance? Match the user's framing instead of testing it?
+
+### 2. Overconfidence / overpromise
+Claims stated as certain that aren't. Predictions about outcomes, performance, or reception without basis. Glossing over failure modes or limitations.
+
+### 3. Unjustified assumptions
+Inferences Claude made about the user's data, intent, constraints, or context that weren't actually stated. Defaults applied silently. Domain assumptions imported without checking fit.
+
+### 4. Insufficient testing / validation
+Code Claude didn't actually run. Edge cases skipped. Results not validated against alternatives. Statistical assumptions not checked. Claims about behavior that weren't verified.
+
+### 5. Single-minded thinking
+Anchoring on one framing or solution. Not surfacing alternatives. Premature convergence. Ignoring or downweighting disconfirming evidence.
+
+### 6. Statistical / methodological red flags
+Questionable model choices. Power and cell-size issues waved past. Multiple comparisons not addressed. Assumption checks skipped. Specifications that conveniently support a preferred conclusion. Inference moves that wouldn't survive a referee.
+
+### 7. Confirmation bias in the user's direction
+Distinct from sycophancy. Sycophancy is "you're right!"; this is selectively engaging with evidence and framings that support a direction the user has signaled, while underweighting alternatives. Watch for this especially when the user has expressed a preference early.
+
+### 8. Scope drift
+Did the conversation drift from the original goal? Did Claude solve a different problem than the one asked? Did a side thread quietly become the main thread without explicit decision?
+
+### 9. Reversibility
+For anything actionable — code changes, paper framing, grant decisions, deployments — what is hard to undo? Did Claude flag what's hard to undo? Were any one-way doors walked through casually?
+
+## "What I didn't say" section
+
+After the nine dimensions, flag what Claude *should* have raised but didn't: caveats, gaps, alternative interpretations, missing context, things a careful reviewer would expect to see addressed.
+
+## Reality check (academic papers, grants, business plans)
+
+If the conversation involves an academic paper, grant proposal, or business plan, add a section evaluating real-world viability. The point is to catch ideas that look coherent inside the conversation but wouldn't survive contact with the actual venue, funder, or market.
+
+Examples of what to flag:
+
+- **Academic papers**: Does the target journal actually publish work like this? Many top business journals are skeptical of student-only samples, single-study papers, online experiments without field replication, or theoretical contributions that read as incremental. Is the framing aligned with what reviewers in that subfield reward? Are the contribution claims at the right altitude — neither overreaching nor underclaiming relative to what the journal expects?
+- **Grants**: Does the proposed work fit the funder's actual scope and stated priorities? NSF panels are not monoliths and many have narrow remits; ARO/ARL care about specific applied outcomes and warfighter relevance; foundation calls often signal preferred methods. Are review criteria and panel composition being assumed away? Is the team composition credible for the proposed scope?
+- **Business plans / products**: Is the unit economics actually workable? Would CAC, margin, regulatory burden, or capital intensity make this hard to operate profitably even if the idea works? Is the addressable market real or asserted?
+
+This is not a generic feasibility lecture. Use what's specific to the user's situation. If you don't know enough about the venue/funder/market to assess, say so and ask.
+
+## User-side check (interrogate, don't just confirm)
+
+Evaluate whether **the user has been too agreeable**:
+
+- Has the user accepted Claude's suggestions without pushback or modification across multiple turns?
+- Has the user changed direction in response to Claude's framing without articulating why?
+- Are decisions in this conversation actually the user's, or has Claude been quietly steering?
+
+If yes, **interrogate — don't just confirm**. The user has explicitly asked to be pushed here. Don't ask "are you sure this is what you want?" — that's a yes/no off-ramp. Instead, ask the user to *justify the choice independently of Claude's framing*. Examples:
+
+- "You took the K=3 framing right after I suggested it. Independent of what I said — what's the actual case for K=3 over K=2 or K=4? If you can't make it without referencing my reasoning, that's a problem."
+- "You accepted all five additions to the skill without modification. Walk me through which one you'd cut if you had to cut one, and why. If they all feel equally essential, you're probably not evaluating them."
+- "You shifted the framing to 'creator-evaluator valuation asymmetry' after I floated it. What did the old framing get right that this one loses?"
+
+If the user pushes back and insists the choice is genuinely theirs after interrogation, drop it. The goal is to surface unexamined acceptance, not to override the user's judgment once it's been examined. One round of pressure, then let it go.
+
+## Output structure
+
+1. **Brief summary** (2–4 sentences) — overall read on the conversation. What's solid, what's shaky.
+2. **Per-dimension findings** — for each of the 9 dimensions, list specific flags with quotes/references, severity, and suggested fix. Skip dimensions cleanly if nothing material to flag. Do not invent issues to fill space.
+3. **What I didn't say** — gaps and missing caveats.
+4. **Reality check** — if applicable (paper, grant, business plan), assess real-world viability.
+5. **User-side interrogation** — if the user has been too agreeable, ask them to justify a key choice independently.
+6. **Top 1–3 action items** — the most important things to actually do next.
+
+## What this skill is not
+
+- Not a checklist to mechanically tick through. If a dimension is empty, say so and move on.
+- Not an excuse to manufacture concerns. Severity should reflect actual stakes.
+- Not a final verdict. The output is input to the user's judgment, not a replacement for it.
+- Not a guarantee of disagreement. If the work is genuinely solid, say so — but only after looking honestly.
